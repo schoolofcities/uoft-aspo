@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "campus_locations",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Campus": "Mississagua", "Address": "3359 Mississauga Rd_Mississauga_ON_L5L 1C6", "Latitude": 43.54825, "Longitude": -79.66261111 }, "geometry": { "type": "Point", "coordinates": [ -79.66261111, 43.54825 ] } },
+{ "type": "Feature", "properties": { "Campus": "Scarborough", "Address": "1265 Military Trail_Scarborough_ON_M1C 1A4", "Latitude": 43.78311111, "Longitude": -79.18733333 }, "geometry": { "type": "Point", "coordinates": [ -79.18733333, 43.78311111 ] } },
+{ "type": "Feature", "properties": { "Campus": "St.George", "Address": "27 King's College Cir, Toronto, ON M5S 1A1", "Latitude": 43.66377778, "Longitude": -79.39602778 }, "geometry": { "type": "Point", "coordinates": [ -79.39602778, 43.66377778 ] } },
+{ "type": "Feature", "properties": { "Campus": "Tri-campus", "Address": "1265 Military Trail_Scarborough_ON_M1C 1A4,3359 Mississauga Rd_Mississauga_ON_L5L 1C6,27 King's College Cir_Toronto_ON M5S 1A,1265 Military Trail_Scarborough_ON_M1C 1A4;3359 Mississauga Rd_Mississauga_ON_L5L 1C6;27 King's College Cir_Toronto_ON M5S 1A", "Latitude": 43.78311111, "Longitude": -79.18733333 }, "geometry": { "type": "Point", "coordinates": [ -79.18733333, 43.78311111 ] } }
+]
+}
