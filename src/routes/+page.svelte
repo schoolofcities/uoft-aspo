@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import Papa from "papaparse";
+    import CampusMap from "$lib/Map.svelte";
 
 	let campusData = [];
 	let uniqueCampusData = [];
@@ -145,6 +146,8 @@
 		</select>
 	</div>
 </div>
+
+<CampusMap />
 
 {#if filteredPrograms.length > 0}
 	<table>
