@@ -70,6 +70,17 @@
 
 	function handleCampusChange(event) {
 		selectedCampus = event.target.value;
+		
+		// If the selected division isn't in the filtered results, reset it
+		const availableDivisions = new Set(
+			campusData
+				.filter(row => row.Campus === selectedCampus)
+				.map(row => row.Division)
+		);
+		if (!availableDivisions.has(selectedDivision)) {
+			selectedDivision = "";
+		}
+
 		updateFilteredPrograms();
 	}
 
@@ -80,6 +91,17 @@
 
 	function handleDivisionChange(event) {
 		selectedDivision = event.target.value;
+		
+		// If the selected campus isn't in the filtered results, reset it
+		const availableCampuses = new Set(
+			campusData
+				.filter(row => row.Division === selectedDivision)
+				.map(row => row.Campus)
+		);
+		if (!availableCampuses.has(selectedCampus)) {
+			selectedCampus = "";
+		}
+
 		updateFilteredPrograms();
 	}
 
@@ -117,7 +139,7 @@
 
 <div class="filter">
 	<label for="programType">Type of Program</label>
-	<select id="programType" on:change={handleProgramTypeChange}>
+	<select id="programType" bind:value={selectedProgramType} on:change={handleProgramTypeChange}>
 		<option value="">Select a type of program</option>
 		{#each uniqueProgramTypes as programType}
 			<option value={programType}>{programType}</option>
@@ -128,7 +150,7 @@
 <div class="filters-container">
 	<div class="filter">
 		<label for="campus">Campus</label>
-		<select id="campus" on:change={handleCampusChange}>
+		<select id="campus" bind:value={selectedCampus} on:change={handleCampusChange}>
 			<option value="">Select a campus</option>
 			{#each uniqueCampuses as campus}
 				<option value={campus}>{campus}</option>
@@ -138,7 +160,7 @@
 
 	<div class="filter">
 		<label for="division">Division</label>
-		<select id="division" on:change={handleDivisionChange}>
+		<select id="division" bind:value={selectedDivision} on:change={handleDivisionChange}>
 			<option value="">Select a division</option>
 			{#each uniqueDivisions as division}
 				<option value={division}>{division}</option>
