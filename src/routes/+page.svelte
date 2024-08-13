@@ -1,21 +1,22 @@
 <script>
 	import { onMount } from "svelte";
 	import Papa from "papaparse";
-    import CampusMap from "$lib/CampusMap.svelte";
+	import CampusMap from "$lib/CampusMap.svelte";
+	import { writable } from "svelte/store";
 
 	let campusData = [];
 	let uniqueCampusData = [];
 	let uniqueCampuses = [];
 	let uniqueProgramTypes = [];
 	let uniqueDivisions = [];
-	let selectedCampuses = new Set();
+	const selectedCampuses = writable(new Set());
 	let selectedProgramTypes = new Set();
 	let selectedDivision = "";
 	let filteredPrograms = [];
 	let sortColumn = "Program Name";
 	let sortOrder = "asc";
 
-	onMount(async() => {
+	onMount(() => {
 		const csvFilePath = "/src/data/access_programs_inventory.csv";
 
 		fetch(csvFilePath)
@@ -74,13 +75,23 @@
 
 	function handleCampusChange(event) {
 		const campus = event.target.value;
-		if (event.target.checked) {
-			selectedCampuses.add(campus);
-		} else {
-			selectedCampuses.delete(campus);
-		}
+		selectedCampuses.update((campuses) => {
+			const newCampuses = new Set(campuses);
+			if (event.target.checked) {
+				newCampuses.add(campus);
+			} else {
+				newCampuses.delete(campus);
+			}
+			return newCampuses;
+		});
 		updateFilteredPrograms();
 	}
+
+
+	// See writable store
+	selectedCampuses.subscribe((value) => {
+		console.log("Selected Campuses:", value);
+	});
 
 	function handleDivisionChange(event) {
 		selectedDivision = event.target.value;
@@ -98,25 +109,26 @@
 	}
 
 	function updateFilteredPrograms() {
-		filteredPrograms = campusData
-			.filter(
-				(row) =>
-					(selectedCampuses.size === 0 ||
-						selectedCampuses.has(row.Campus)) &&
-					(selectedProgramTypes.size === 0 ||
-						selectedProgramTypes.has(row["Type of Program"])) &&
-					(selectedDivision === "" ||
-						row.Division === selectedDivision),
-			)
-			.sort((a, b) => {
-				const compareA = a[sortColumn] || "";
-				const compareB = b[sortColumn] || "";
-				if (sortOrder === "asc") {
-					return compareA.localeCompare(compareB);
-				} else {
-					return compareB.localeCompare(compareA);
-				}
-			});
+		selectedCampuses.subscribe((campuses) => {
+			filteredPrograms = campusData
+				.filter(
+					(row) =>
+						(campuses.size === 0 || campuses.has(row.Campus)) &&
+						(selectedProgramTypes.size === 0 ||
+							selectedProgramTypes.has(row["Type of Program"])) &&
+						(selectedDivision === "" ||
+							row.Division === selectedDivision),
+				)
+				.sort((a, b) => {
+					const compareA = a[sortColumn] || "";
+					const compareB = b[sortColumn] || "";
+					if (sortOrder === "asc") {
+						return compareA.localeCompare(compareB);
+					} else {
+						return compareB.localeCompare(compareA);
+					}
+				});
+		});
 	}
 
 	function sortBy(column) {
@@ -128,14 +140,17 @@
 		}
 		updateFilteredPrograms();
 	}
-
 </script>
 
 <div class="filter">
 	<label>Type of Program</label>
 	{#each uniqueProgramTypes as programType}
 		<div>
-			<input type="checkbox" value={programType} on:change={handleProgramTypeChange} />
+			<input
+				type="checkbox"
+				value={programType}
+				on:change={handleProgramTypeChange}
+			/>
 			{programType}
 		</div>
 	{/each}
@@ -145,16 +160,24 @@
 	<div class="filter">
 		<label>Campus</label>
 		{#each uniqueCampuses as campus}
-		<div>
-			<input type="checkbox" value={campus} on:change={handleCampusChange} />
-			{campus}
-		</div>
+			<div>
+				<input
+					type="checkbox"
+					value={campus}
+					on:change={handleCampusChange}
+				/>
+				{campus}
+			</div>
 		{/each}
 	</div>
 
 	<div class="filter">
 		<label for="division">Division</label>
-		<select id="division" bind:value={selectedDivision} on:change={handleDivisionChange}>
+		<select
+			id="division"
+			bind:value={selectedDivision}
+			on:change={handleDivisionChange}
+		>
 			<option value="">Select a division</option>
 			{#each uniqueDivisions as division}
 				<option value={division}>{division}</option>
@@ -163,7 +186,7 @@
 	</div>
 </div>
 
-<CampusMap />
+<CampusMap/>
 
 {#if filteredPrograms.length > 0}
 	<table>
