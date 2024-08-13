@@ -1,21 +1,21 @@
 <script>
 	import { onMount } from "svelte";
 	import Papa from "papaparse";
-    import CampusMap from "$lib/Map.svelte";
+    import CampusMap from "$lib/CampusMap.svelte";
 
 	let campusData = [];
 	let uniqueCampusData = [];
 	let uniqueCampuses = [];
 	let uniqueProgramTypes = [];
 	let uniqueDivisions = [];
-	let selectedCampus = "";
-	let selectedProgramType = "";
+	let selectedCampuses = new Set();
+	let selectedProgramTypes = new Set();
 	let selectedDivision = "";
 	let filteredPrograms = [];
 	let sortColumn = "Program Name";
 	let sortOrder = "asc";
 
-	onMount(() => {
+	onMount(async() => {
 		const csvFilePath = "/src/data/access_programs_inventory.csv";
 
 		fetch(csvFilePath)
@@ -51,6 +51,10 @@
 						uniqueCampuses = uniqueCampusData
 							.map((data) => data.campus)
 							.sort();
+
+						// Log the unique campus names to the console
+						console.log("Unique Campuses:", uniqueCampuses);
+
 						uniqueProgramTypes = [
 							...new Set(
 								results.data.map(
@@ -69,39 +73,27 @@
 	});
 
 	function handleCampusChange(event) {
-		selectedCampus = event.target.value;
-		
-		// If the selected division isn't in the filtered results, reset it
-		const availableDivisions = new Set(
-			campusData
-				.filter(row => row.Campus === selectedCampus)
-				.map(row => row.Division)
-		);
-		if (!availableDivisions.has(selectedDivision)) {
-			selectedDivision = "";
+		const campus = event.target.value;
+		if (event.target.checked) {
+			selectedCampuses.add(campus);
+		} else {
+			selectedCampuses.delete(campus);
 		}
-
-		updateFilteredPrograms();
-	}
-
-	function handleProgramTypeChange(event) {
-		selectedProgramType = event.target.value;
 		updateFilteredPrograms();
 	}
 
 	function handleDivisionChange(event) {
 		selectedDivision = event.target.value;
-		
-		// If the selected campus isn't in the filtered results, reset it
-		const availableCampuses = new Set(
-			campusData
-				.filter(row => row.Division === selectedDivision)
-				.map(row => row.Campus)
-		);
-		if (!availableCampuses.has(selectedCampus)) {
-			selectedCampus = "";
-		}
+		updateFilteredPrograms();
+	}
 
+	function handleProgramTypeChange(event) {
+		const programType = event.target.value;
+		if (event.target.checked) {
+			selectedProgramTypes.add(programType);
+		} else {
+			selectedProgramTypes.delete(programType);
+		}
 		updateFilteredPrograms();
 	}
 
@@ -109,9 +101,10 @@
 		filteredPrograms = campusData
 			.filter(
 				(row) =>
-					(selectedCampus === "" || row.Campus === selectedCampus) &&
-					(selectedProgramType === "" ||
-						row["Type of Program"] === selectedProgramType) &&
+					(selectedCampuses.size === 0 ||
+						selectedCampuses.has(row.Campus)) &&
+					(selectedProgramTypes.size === 0 ||
+						selectedProgramTypes.has(row["Type of Program"])) &&
 					(selectedDivision === "" ||
 						row.Division === selectedDivision),
 			)
@@ -135,27 +128,28 @@
 		}
 		updateFilteredPrograms();
 	}
+
 </script>
 
 <div class="filter">
-	<label for="programType">Type of Program</label>
-	<select id="programType" bind:value={selectedProgramType} on:change={handleProgramTypeChange}>
-		<option value="">Select a type of program</option>
-		{#each uniqueProgramTypes as programType}
-			<option value={programType}>{programType}</option>
-		{/each}
-	</select>
+	<label>Type of Program</label>
+	{#each uniqueProgramTypes as programType}
+		<div>
+			<input type="checkbox" value={programType} on:change={handleProgramTypeChange} />
+			{programType}
+		</div>
+	{/each}
 </div>
 
 <div class="filters-container">
 	<div class="filter">
-		<label for="campus">Campus</label>
-		<select id="campus" bind:value={selectedCampus} on:change={handleCampusChange}>
-			<option value="">Select a campus</option>
-			{#each uniqueCampuses as campus}
-				<option value={campus}>{campus}</option>
-			{/each}
-		</select>
+		<label>Campus</label>
+		{#each uniqueCampuses as campus}
+		<div>
+			<input type="checkbox" value={campus} on:change={handleCampusChange} />
+			{campus}
+		</div>
+		{/each}
 	</div>
 
 	<div class="filter">

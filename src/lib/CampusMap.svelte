@@ -42,7 +42,7 @@
             zoom: 9.4,
             maxZoom: 16.5,
             minZoom: 9,
-            maxPitch: 85,
+            maxPitch: 0,
             bearing: -17.1,
             projection: "globe",
             scrollZoom: true,
@@ -59,7 +59,10 @@
 
         map.addControl(scale, "bottom-left");
         map.addControl(new maplibregl.NavigationControl(), "top-left");
+
         map.dragRotate.disable();
+        map.doubleClickZoom.disable();
+
 
         const response = await fetch("/src/data/campus_locations.geojson");
         const geojson = await response.json();
@@ -89,6 +92,28 @@
                     "circle-radius": 8,
                     "circle-color": "#007cbf",
                 },
+            });
+
+            // Add popup functionality
+            const popup = new maplibregl.Popup({
+                closeButton: false,
+                closeOnClick: false,
+            });
+
+            map.on("mouseenter", "campus-points", (e) => {
+                map.getCanvas().style.cursor = "pointer";
+                const coordinates = e.features[0].geometry.coordinates.slice();
+                const { Campus, Address } = e.features[0].properties;
+
+                popup
+                    .setLngLat(coordinates)
+                    .setHTML(`<strong>${Campus}</strong><br>${Address}`)
+                    .addTo(map);
+            });
+
+            map.on("mouseleave", "campus-points", () => {
+                map.getCanvas().style.cursor = "";
+                popup.remove();
             });
         });
 
