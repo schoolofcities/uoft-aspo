@@ -4,6 +4,8 @@
     import "maplibre-gl/dist/maplibre-gl.css";
     import * as pmtiles from "pmtiles";
     import BaseLayer from "/src/data/toronto.json";
+	import { CampusStore } from "$lib/stores";
+    import { get } from "svelte/store";
 
     let map;
     let scale = new maplibregl.ScaleControl({
@@ -94,7 +96,6 @@
                 },
             });
 
-            // Add popup functionality
             const popup = new maplibregl.Popup({
                 closeButton: false,
                 closeOnClick: false,
@@ -116,12 +117,24 @@
                 popup.remove();
             });
         });
+        
+        map.on("click", "campus-points", (e) => {
+                const clickedCampus = e.features[0].properties.Campus;
+                const currentStoreValues = get(CampusStore);
 
-        // Console log zoom and center
+                if (currentStoreValues.includes(clickedCampus)) {
+                    const updatedCampuses = currentStoreValues.filter(item => item !== clickedCampus);
+                    CampusStore.set(updatedCampuses);
+                } else {
+                    CampusStore.set([...currentStoreValues, clickedCampus]);
+                }
+            });
+
         map.on("moveend", () => {
             console.log("Map center:", map.getCenter());
             console.log("Map zoom level:", map.getZoom());
         });
+
     });
 </script>
 

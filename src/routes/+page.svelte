@@ -2,23 +2,28 @@
 	import { onMount } from "svelte";
 	import Papa from "papaparse";
 	import CampusMap from "$lib/CampusMap.svelte";
-	import { writable } from "svelte/store";
+	import { CampusStore } from "$lib/stores";
 
 	let campusData = [];
 	let uniqueCampusData = [];
 	let uniqueCampuses = [];
 	let uniqueProgramTypes = [];
 	let uniqueDivisions = [];
-	const selectedCampuses = writable(new Set());
 	let selectedProgramTypes = new Set();
 	let selectedDivision = "";
 	let filteredPrograms = [];
 	let sortColumn = "Program Name";
 	let sortOrder = "asc";
 
+	let currentCampusStore = [];
+
+	$: {
+		currentCampusStore = $CampusStore;
+		updateFilteredPrograms();
+	}
+
 	onMount(() => {
 		const csvFilePath = "/src/data/access_programs_inventory.csv";
-
 		fetch(csvFilePath)
 			.then((response) => response.text())
 			.then((csvData) => {
@@ -26,9 +31,7 @@
 					header: true,
 					complete: (results) => {
 						campusData = results.data;
-
 						const campusMap = new Map();
-
 						results.data.forEach((row) => {
 							if (row.Campus && row.Longitude && row.Latitude) {
 								const key = row.Campus.trim();
@@ -40,7 +43,6 @@
 								}
 							}
 						});
-
 						uniqueCampusData = Array.from(
 							campusMap,
 							([campus, coords]) => ({
@@ -48,14 +50,9 @@
 								...coords,
 							}),
 						);
-
 						uniqueCampuses = uniqueCampusData
 							.map((data) => data.campus)
 							.sort();
-
-						// Log the unique campus names to the console
-						console.log("Unique Campuses:", uniqueCampuses);
-
 						uniqueProgramTypes = [
 							...new Set(
 								results.data.map(
@@ -66,7 +63,6 @@
 						uniqueDivisions = [
 							...new Set(results.data.map((row) => row.Division)),
 						].sort();
-
 						updateFilteredPrograms();
 					},
 				});
@@ -75,23 +71,15 @@
 
 	function handleCampusChange(event) {
 		const campus = event.target.value;
-		selectedCampuses.update((campuses) => {
-			const newCampuses = new Set(campuses);
-			if (event.target.checked) {
-				newCampuses.add(campus);
-			} else {
-				newCampuses.delete(campus);
-			}
-			return newCampuses;
-		});
-		updateFilteredPrograms();
+		const currentStoreValues = $CampusStore;
+		if (currentStoreValues.includes(campus)) {
+			CampusStore.update((store) =>
+				store.filter((item) => item !== campus),
+			);
+		} else {
+			CampusStore.update((store) => [...store, campus]);
+		}
 	}
-
-
-	// See writable store
-	selectedCampuses.subscribe((value) => {
-		console.log("Selected Campuses:", value);
-	});
 
 	function handleDivisionChange(event) {
 		selectedDivision = event.target.value;
@@ -109,26 +97,26 @@
 	}
 
 	function updateFilteredPrograms() {
-		selectedCampuses.subscribe((campuses) => {
-			filteredPrograms = campusData
-				.filter(
-					(row) =>
-						(campuses.size === 0 || campuses.has(row.Campus)) &&
-						(selectedProgramTypes.size === 0 ||
-							selectedProgramTypes.has(row["Type of Program"])) &&
-						(selectedDivision === "" ||
-							row.Division === selectedDivision),
-				)
-				.sort((a, b) => {
-					const compareA = a[sortColumn] || "";
-					const compareB = b[sortColumn] || "";
-					if (sortOrder === "asc") {
-						return compareA.localeCompare(compareB);
-					} else {
-						return compareB.localeCompare(compareA);
-					}
-				});
-		});
+		const currentCampuses = new Set(currentCampusStore);
+		filteredPrograms = campusData
+			.filter(
+				(row) =>
+					(currentCampuses.size === 0 ||
+						currentCampuses.has(row.Campus)) &&
+					(selectedProgramTypes.size === 0 ||
+						selectedProgramTypes.has(row["Type of Program"])) &&
+					(selectedDivision === "" ||
+						row.Division === selectedDivision),
+			)
+			.sort((a, b) => {
+				const compareA = a[sortColumn] || "";
+				const compareB = b[sortColumn] || "";
+				if (sortOrder === "asc") {
+					return compareA.localeCompare(compareB);
+				} else {
+					return compareB.localeCompare(compareA);
+				}
+			});
 	}
 
 	function sortBy(column) {
@@ -150,12 +138,12 @@
 				type="checkbox"
 				value={programType}
 				on:change={handleProgramTypeChange}
+				checked={selectedProgramTypes.has(programType)}
 			/>
 			{programType}
 		</div>
 	{/each}
 </div>
-
 <div class="filters-container">
 	<div class="filter">
 		<label>Campus</label>
@@ -165,12 +153,12 @@
 					type="checkbox"
 					value={campus}
 					on:change={handleCampusChange}
+					checked={currentCampusStore.includes(campus)}
 				/>
 				{campus}
 			</div>
 		{/each}
 	</div>
-
 	<div class="filter">
 		<label for="division">Division</label>
 		<select
@@ -186,7 +174,7 @@
 	</div>
 </div>
 
-<CampusMap/>
+<CampusMap />
 
 {#if filteredPrograms.length > 0}
 	<table>
@@ -216,17 +204,15 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each filteredPrograms as { 'Program Name': programName, Campus, Division }}
+			{#each filteredPrograms as program}
 				<tr>
-					<td>{programName}</td>
-					<td>{Campus}</td>
-					<td>{Division}</td>
+					<td>{program["Program Name"]}</td>
+					<td>{program.Campus}</td>
+					<td>{program.Division}</td>
 				</tr>
 			{/each}
 		</tbody>
 	</table>
-{:else}
-	<p>No programs matching selected criteria.</p>
 {/if}
 
 <style>
