@@ -4,7 +4,7 @@
     import "maplibre-gl/dist/maplibre-gl.css";
     import * as pmtiles from "pmtiles";
     import BaseLayer from "/src/data/toronto.json";
-	import { CampusStore } from "$lib/stores";
+    import { CampusStore } from "$lib/stores";
     import { get } from "svelte/store";
 
     let map;
@@ -65,7 +65,6 @@
         map.dragRotate.disable();
         map.doubleClickZoom.disable();
 
-
         const response = await fetch("/src/data/campus_locations.geojson");
         const geojson = await response.json();
 
@@ -86,14 +85,40 @@
                 data: geojson,
             });
 
-            map.addLayer({
-                id: "campus-points",
-                type: "circle",
-                source: "campus-locations",
-                paint: {
-                    "circle-radius": 8,
-                    "circle-color": "#007cbf",
-                },
+            CampusStore.subscribe((campuses) => {
+                const campusColors = campuses.reduce((acc, campus) => {
+                    acc[campus] = "#007cbf";
+                    return acc;
+                }, {});
+
+                const defaultColor = "grey";
+
+                if (!map.getLayer("campus-points")) {
+                    map.addLayer({
+                        id: "campus-points",
+                        type: "circle",
+                        source: "campus-locations",
+                        paint: {
+                            "circle-radius": 8,
+                            "circle-color": defaultColor,
+                        },
+                    });
+                } else {
+                    if (campuses.length === 0) {
+                        map.setPaintProperty(
+                            "campus-points",
+                            "circle-color",
+                            defaultColor,
+                        );
+                    } else {
+                        map.setPaintProperty("campus-points", "circle-color", [
+                            "match",
+                            ["get", "Campus"],
+                            ...Object.entries(campusColors).flat(),
+                            defaultColor,
+                        ]);
+                    }
+                }
             });
 
             const popup = new maplibregl.Popup({
@@ -117,24 +142,25 @@
                 popup.remove();
             });
         });
-        
-        map.on("click", "campus-points", (e) => {
-                const clickedCampus = e.features[0].properties.Campus;
-                const currentStoreValues = get(CampusStore);
 
-                if (currentStoreValues.includes(clickedCampus)) {
-                    const updatedCampuses = currentStoreValues.filter(item => item !== clickedCampus);
-                    CampusStore.set(updatedCampuses);
-                } else {
-                    CampusStore.set([...currentStoreValues, clickedCampus]);
-                }
-            });
+        map.on("click", "campus-points", (e) => {
+            const clickedCampus = e.features[0].properties.Campus;
+            const currentStoreValues = get(CampusStore);
+
+            if (currentStoreValues.includes(clickedCampus)) {
+                const updatedCampuses = currentStoreValues.filter(
+                    (item) => item !== clickedCampus,
+                );
+                CampusStore.set(updatedCampuses);
+            } else {
+                CampusStore.set([...currentStoreValues, clickedCampus]);
+            }
+        });
 
         map.on("moveend", () => {
             console.log("Map center:", map.getCenter());
             console.log("Map zoom level:", map.getZoom());
         });
-
     });
 </script>
 
