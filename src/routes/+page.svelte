@@ -8,9 +8,7 @@
 	let uniqueCampusData = [];
 	let uniqueCampuses = [];
 	let uniqueProgramTypes = [];
-	let uniqueDivisions = [];
 	let selectedProgramTypes = new Set();
-	let selectedDivision = "";
 	let filteredPrograms = [];
 	let sortColumn = "Program Name";
 	let sortOrder = "asc";
@@ -60,9 +58,6 @@
 								),
 							),
 						].sort();
-						uniqueDivisions = [
-							...new Set(results.data.map((row) => row.Division)),
-						].sort();
 						updateFilteredPrograms();
 					},
 				});
@@ -79,11 +74,6 @@
 		} else {
 			CampusStore.update((store) => [...store, campus]);
 		}
-	}
-
-	function handleDivisionChange(event) {
-		selectedDivision = event.target.value;
-		updateFilteredPrograms();
 	}
 
 	function handleProgramTypeChange(event) {
@@ -104,9 +94,7 @@
 					(currentCampuses.size === 0 ||
 						currentCampuses.has(row.Campus)) &&
 					(selectedProgramTypes.size === 0 ||
-						selectedProgramTypes.has(row["Type of Program"])) &&
-					(selectedDivision === "" ||
-						row.Division === selectedDivision),
+						selectedProgramTypes.has(row["Type of Program"]))
 			)
 			.sort((a, b) => {
 				const compareA = a[sortColumn] || "";
@@ -158,19 +146,6 @@
 				{campus}
 			</div>
 		{/each}
-	</div>
-	<div class="filter">
-		<label for="division">Division</label>
-		<select
-			id="division"
-			bind:value={selectedDivision}
-			on:change={handleDivisionChange}
-		>
-			<option value="">Select a division</option>
-			{#each uniqueDivisions as division}
-				<option value={division}>{division}</option>
-			{/each}
-		</select>
 	</div>
 </div>
 
