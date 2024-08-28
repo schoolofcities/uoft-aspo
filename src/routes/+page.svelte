@@ -3,6 +3,7 @@
 	import Papa from "papaparse";
 	import CampusMap from "$lib/CampusMap.svelte";
 	import { CampusStore } from "$lib/stores";
+	import "../assets/global.css";
 
 	let campusData = [];
 	let uniqueCampusData = [];
@@ -53,9 +54,12 @@
 							.sort();
 						uniqueProgramTypes = [
 							...new Set(
-								results.data.map(
-									(row) => row["Type of Program"],
-								),
+								results.data
+									.map((row) => row["Type of Program"])
+									.filter(
+										(type) =>
+											type !=="Outreach & Engagement: Awareness_Career Exploration_Academic Supports; Access: Bridging_Transition_Pre-programs",
+									),
 							),
 						].sort();
 						updateFilteredPrograms();
@@ -89,13 +93,24 @@
 	function updateFilteredPrograms() {
 		const currentCampuses = new Set(currentCampusStore);
 		filteredPrograms = campusData
-			.filter(
-				(row) =>
+			.filter((row) => {
+				const programType = row["Type of Program"];
+				const includesSelectedType = Array.from(
+					selectedProgramTypes,
+				).some(
+					(type) =>
+						programType.includes(type) ||
+						programType.includes(
+							"Outreach & Engagement: Awareness_Career Exploration_Academic Supports; Access: Bridging_Transition_Pre-programs",
+						),
+				);
+
+				return (
 					(currentCampuses.size === 0 ||
 						currentCampuses.has(row.Campus)) &&
-					(selectedProgramTypes.size === 0 ||
-						selectedProgramTypes.has(row["Type of Program"]))
-			)
+					(selectedProgramTypes.size === 0 || includesSelectedType)
+				);
+			})
 			.sort((a, b) => {
 				const compareA = a[sortColumn] || "";
 				const compareB = b[sortColumn] || "";
