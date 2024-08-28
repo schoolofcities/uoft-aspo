@@ -162,7 +162,7 @@
 				on:change={handleProgramTypeChange}
 				checked={selectedProgramTypes.has(programType)}
 			/>
-			{programType}
+			{programType.replace(/_/g, ' ')}
 		</div>
 	{/each}
 </div>
