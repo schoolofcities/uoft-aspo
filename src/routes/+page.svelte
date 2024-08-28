@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import Papa from "papaparse";
 	import CampusMap from "$lib/CampusMap.svelte";
-	import { CampusStore } from "$lib/stores";
+	import { CampusStore, TriCampusStore } from "$lib/stores";
 	import "../assets/global.css";
 
 	let campusData = [];
@@ -76,8 +76,14 @@
 			CampusStore.update((store) =>
 				store.filter((item) => item !== campus),
 			);
+			if (campus === "Tri-campus") {
+				TriCampusStore.set(false);
+			}
 		} else {
 			CampusStore.update((store) => [...store, campus]);
+			if (campus === "Tri-campus") {
+				TriCampusStore.set(true);
+			}
 		}
 	}
 
@@ -101,39 +107,39 @@
 			(campus) => currentCampuses.has(campus),
 		);
 
-			filteredPrograms = campusData
-		.filter((row) => {
-			const programType = row["Type of Program"];
-			const includesSelectedType = Array.from(
-				selectedProgramTypes
-			).some(
-				(type) =>
-					programType.includes(type) ||
-					programType.includes(
-						"Outreach & Engagement: Awareness_Career Exploration_Academic Supports; Access: Bridging_Transition_Pre-programs"
-					)
-			);
+		filteredPrograms = campusData
+			.filter((row) => {
+				const programType = row["Type of Program"];
+				const includesSelectedType = Array.from(
+					selectedProgramTypes,
+				).some(
+					(type) =>
+						programType.includes(type) ||
+						programType.includes(
+							"Outreach & Engagement: Awareness_Career Exploration_Academic Supports; Access: Bridging_Transition_Pre-programs",
+						),
+				);
 
-			const campusCondition =
-				(currentCampuses.size === 0 ||
-					currentCampuses.has(row.Campus)) ||
-				(allSelectedExceptTriCampus && row.Campus === "Tri-campus");
+				const campusCondition =
+					currentCampuses.size === 0 ||
+					currentCampuses.has(row.Campus) ||
+					(allSelectedExceptTriCampus && row.Campus === "Tri-campus");
 
-			return (
-				campusCondition &&
-				(selectedProgramTypes.size === 0 || includesSelectedType)
-			);
-		})
-		.sort((a, b) => {
-			const compareA = a[sortColumn] || "";
-			const compareB = b[sortColumn] || "";
-			if (sortOrder === "asc") {
-				return compareA.localeCompare(compareB);
-			} else {
-				return compareB.localeCompare(compareA);
-			}
-		});
-}
+				return (
+					campusCondition &&
+					(selectedProgramTypes.size === 0 || includesSelectedType)
+				);
+			})
+			.sort((a, b) => {
+				const compareA = a[sortColumn] || "";
+				const compareB = b[sortColumn] || "";
+				if (sortOrder === "asc") {
+					return compareA.localeCompare(compareB);
+				} else {
+					return compareB.localeCompare(compareA);
+				}
+			});
+	}
 
 	function sortBy(column) {
 		if (sortColumn === column) {

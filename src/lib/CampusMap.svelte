@@ -4,7 +4,7 @@
     import "maplibre-gl/dist/maplibre-gl.css";
     import * as pmtiles from "pmtiles";
     import BaseLayer from "/src/data/toronto.json";
-    import { CampusStore } from "$lib/stores";
+    import { CampusStore, TriCampusStore } from "$lib/stores";
     import { get } from "svelte/store";
 
     let map;
@@ -85,40 +85,62 @@
                 data: geojson,
             });
 
-            CampusStore.subscribe((campuses) => {
-                const campusColors = campuses.reduce((acc, campus) => {
+            map.addLayer({
+                id: "campus-points",
+                type: "circle",
+                source: "campus-locations",
+                paint: {
+                    "circle-radius": 8,
+                    "circle-color": "grey",
+                },
+            });
+
+            function updateCampusPoints(campusList) {
+                const campusColors = campusList.reduce((acc, campus) => {
                     acc[campus] = "#007cbf";
                     return acc;
                 }, {});
 
                 const defaultColor = "grey";
 
-                if (!map.getLayer("campus-points")) {
-                    map.addLayer({
-                        id: "campus-points",
-                        type: "circle",
-                        source: "campus-locations",
-                        paint: {
-                            "circle-radius": 8,
-                            "circle-color": defaultColor,
-                        },
-                    });
+                if (campusList.length === 0) {
+                    map.setPaintProperty(
+                        "campus-points",
+                        "circle-color",
+                        defaultColor,
+                    );
                 } else {
-                    if (campuses.length === 0) {
-                        map.setPaintProperty(
-                            "campus-points",
-                            "circle-color",
-                            defaultColor,
+                    map.setPaintProperty("campus-points", "circle-color", [
+                        "match",
+                        ["get", "Campus"],
+                        ...Object.entries(campusColors).flat(),
+                        defaultColor,
+                    ]);
+                }
+            }
+
+            CampusStore.subscribe((campuses) => {
+                if (get(TriCampusStore)) {
+                    // TriCampusStore is true, highlight all points
+                    updateCampusPoints(
+                        geojson.features.map((f) => f.properties.Campus),
+                    );
+                } else {
+                    // TriCampusStore is false, use CampusStore for highlighting
+                    updateCampusPoints(campuses);
+                }
+            });
+
+            TriCampusStore.subscribe(() => {
+                CampusStore.subscribe((campuses) => {
+                    if (get(TriCampusStore)) {
+                        updateCampusPoints(
+                            geojson.features.map((f) => f.properties.Campus),
                         );
                     } else {
-                        map.setPaintProperty("campus-points", "circle-color", [
-                            "match",
-                            ["get", "Campus"],
-                            ...Object.entries(campusColors).flat(),
-                            defaultColor,
-                        ]);
+                        updateCampusPoints(campuses);
                     }
-                }
+                })();
             });
 
             const popup = new maplibregl.Popup({
