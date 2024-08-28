@@ -1,5 +1,5 @@
 @font-face {
-    font-family: Ti;
+    font-family: TradeGothicBold;
     src: url("Trade Gothic LT Bold.ttf");
 }
 
@@ -42,9 +42,9 @@ h1 {
 }
 
 h2 {
-    font-family: TradeGothicBold;
+    font-family: TradeGothicBold, sans-serif;
     font-size: 24px;
-    color: var(--brandWhite);
+    color: var(--brandDarkBlue);
     text-decoration: underline;
 }
 

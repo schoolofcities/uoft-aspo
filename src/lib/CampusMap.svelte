@@ -6,6 +6,7 @@
     import BaseLayer from "/src/data/toronto.json";
     import { CampusStore, TriCampusStore } from "$lib/stores";
     import { get } from "svelte/store";
+    import "../assets/global.css";
 
     let map;
     let scale = new maplibregl.ScaleControl({
@@ -19,9 +20,16 @@
         [-78.914763, 43.93074], // NE coords
     ];
 
+    let defaultColor;
+    let highlightColor;
+
     onMount(async () => {
         let protocol = new pmtiles.Protocol();
         maplibregl.addProtocol("pmtiles", protocol.tile);
+
+        const rootStyles = getComputedStyle(document.documentElement);
+        defaultColor = rootStyles.getPropertyValue('--brandGray').trim();
+        highlightColor = rootStyles.getPropertyValue('--brandMedBlue').trim();
 
         map = new maplibregl.Map({
             container: "map",
@@ -97,11 +105,11 @@
 
             function updateCampusPoints(campusList) {
                 const campusColors = campusList.reduce((acc, campus) => {
-                    acc[campus] = "#007cbf";
+                    acc[campus] = highlightColor;
                     return acc;
                 }, {});
 
-                const defaultColor = "grey";
+                // const defaultColor = 'grey';
 
                 if (campusList.length === 0) {
                     map.setPaintProperty(
