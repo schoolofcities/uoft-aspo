@@ -58,7 +58,8 @@
 									.map((row) => row["Type of Program"])
 									.filter(
 										(type) =>
-											type !=="Outreach & Engagement: Awareness_Career Exploration_Academic Supports; Access: Bridging_Transition_Pre-programs",
+											type !==
+											"Outreach & Engagement: Awareness_Career Exploration_Academic Supports; Access: Bridging_Transition_Pre-programs",
 									),
 							),
 						].sort();
@@ -92,35 +93,47 @@
 
 	function updateFilteredPrograms() {
 		const currentCampuses = new Set(currentCampusStore);
-		filteredPrograms = campusData
-			.filter((row) => {
-				const programType = row["Type of Program"];
-				const includesSelectedType = Array.from(
-					selectedProgramTypes,
-				).some(
-					(type) =>
-						programType.includes(type) ||
-						programType.includes(
-							"Outreach & Engagement: Awareness_Career Exploration_Academic Supports; Access: Bridging_Transition_Pre-programs",
-						),
-				);
 
-				return (
-					(currentCampuses.size === 0 ||
-						currentCampuses.has(row.Campus)) &&
-					(selectedProgramTypes.size === 0 || includesSelectedType)
-				);
-			})
-			.sort((a, b) => {
-				const compareA = a[sortColumn] || "";
-				const compareB = b[sortColumn] || "";
-				if (sortOrder === "asc") {
-					return compareA.localeCompare(compareB);
-				} else {
-					return compareB.localeCompare(compareA);
-				}
-			});
-	}
+		const allCampusesExceptTriCampus = uniqueCampuses.filter(
+			(campus) => campus !== "Tri-campus",
+		);
+		const allSelectedExceptTriCampus = allCampusesExceptTriCampus.every(
+			(campus) => currentCampuses.has(campus),
+		);
+
+			filteredPrograms = campusData
+		.filter((row) => {
+			const programType = row["Type of Program"];
+			const includesSelectedType = Array.from(
+				selectedProgramTypes
+			).some(
+				(type) =>
+					programType.includes(type) ||
+					programType.includes(
+						"Outreach & Engagement: Awareness_Career Exploration_Academic Supports; Access: Bridging_Transition_Pre-programs"
+					)
+			);
+
+			const campusCondition =
+				(currentCampuses.size === 0 ||
+					currentCampuses.has(row.Campus)) ||
+				(allSelectedExceptTriCampus && row.Campus === "Tri-campus");
+
+			return (
+				campusCondition &&
+				(selectedProgramTypes.size === 0 || includesSelectedType)
+			);
+		})
+		.sort((a, b) => {
+			const compareA = a[sortColumn] || "";
+			const compareB = b[sortColumn] || "";
+			if (sortOrder === "asc") {
+				return compareA.localeCompare(compareB);
+			} else {
+				return compareB.localeCompare(compareA);
+			}
+		});
+}
 
 	function sortBy(column) {
 		if (sortColumn === column) {
