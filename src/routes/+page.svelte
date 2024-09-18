@@ -21,7 +21,7 @@
 		updateFilteredPrograms();
 	}
 
-	onMount(() => {
+	onMount( async() => {
 		const csvFilePath = "/src/data/access_programs_inventory.csv";
 		fetch(csvFilePath)
 			.then((response) => response.text())
@@ -141,118 +141,120 @@
 			});
 	}
 
-	function sortBy(column) {
-		if (sortColumn === column) {
-			sortOrder = sortOrder === "asc" ? "desc" : "asc";
-		} else {
-			sortColumn = column;
-			sortOrder = "asc";
-		}
-		updateFilteredPrograms();
-	}
 </script>
 
-<div class="filter">
-	<label>Type of Program</label>
-	{#each uniqueProgramTypes as programType}
-		<div>
-			<input
-				type="checkbox"
-				value={programType}
-				on:change={handleProgramTypeChange}
-				checked={selectedProgramTypes.has(programType)}
-			/>
-			{programType.replace(/_/g, ' ')}
-		</div>
-	{/each}
-</div>
 <div class="filters-container">
+	
+	<div class="program">
 	<div class="filter">
-		<label>Campus</label>
-		{#each uniqueCampuses as campus}
+		<label>Type of Program</label>
+		{#each uniqueProgramTypes as programType}
 			<div>
 				<input
 					type="checkbox"
-					value={campus}
-					on:change={handleCampusChange}
-					checked={currentCampusStore.includes(campus)}
+					value={programType}
+					on:change={handleProgramTypeChange}
+					checked={selectedProgramTypes.has(programType)}
 				/>
-				{campus}
+				{programType.replace(/_/g, " ")}
 			</div>
 		{/each}
 	</div>
 </div>
 
-<CampusMap />
-
-{#if filteredPrograms.length > 0}
-	<table>
-		<thead>
-			<tr>
-				<th on:click={() => sortBy("Program Name")}>
-					Program Name {sortColumn === "Program Name"
-						? sortOrder === "asc"
-							? "▲"
-							: "▼"
-						: ""}
-				</th>
-				<th on:click={() => sortBy("Campus")}>
-					Campus {sortColumn === "Campus"
-						? sortOrder === "asc"
-							? "▲"
-							: "▼"
-						: ""}
-				</th>
-				<th on:click={() => sortBy("Division")}>
-					Division {sortColumn === "Division"
-						? sortOrder === "asc"
-							? "▲"
-							: "▼"
-						: ""}
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each filteredPrograms as program}
-				<tr>
-					<td>{program["Program Name"]}</td>
-					<td>{program.Campus}</td>
-					<td>{program.Division}</td>
-				</tr>
+<div class="campus">
+	<div class="filter">
+		<label>Campus</label>
+		<div class="campus-filters">
+			{#each uniqueCampuses as campus}
+				<div>
+					<input
+						type="checkbox"
+						value={campus}
+						on:change={handleCampusChange}
+						checked={currentCampusStore.includes(campus)}
+					/>
+					{campus}
+				</div>
 			{/each}
-		</tbody>
-	</table>
-{/if}
+		</div>
+	</div>
+</div>
+</div>
+
+<div class="container">
+
+	{#if filteredPrograms.length > 0}
+		<ul class="program-list">
+			{#each filteredPrograms as program}
+				<li>
+					<strong>{program["Program Name"]}</strong><br />
+					{program["Division"]}<br />
+					{program["Campus"]}
+				</li>
+			{/each}
+		</ul>
+	{/if}
+
+	<CampusMap />
+</div>
 
 <style>
+	.container {
+		display: flex;
+		gap: 1rem; /* Space between the list and the map */
+		margin: 1em 0 1em 1em;
+	}
+
+	.program-list {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+		width: 40%;
+		height: 80vh;
+		overflow-y: auto;
+		direction: rtl;
+		text-align: left;
+		border: 1px solid #ccc; /* Add a border around the program list */
+	}
+
+	.program-list li {
+		margin: 1em;
+		line-height: 1.5;
+		border-bottom: 1px solid #ccc;
+		padding-bottom: 1em;
+		direction: ltr;
+	}
+
+	label {
+		font-weight: bold;
+		font-size: 1em;
+		margin-bottom: .5em;
+		display: block;
+	}
+
 	.filters-container {
 		display: flex;
-		gap: 1rem;
-		margin-bottom: 1rem;
+		gap: 1em;
+		margin: 1em 0 0em 1em;
+	}
+
+	.program {
+		width: 40%;
+	}
+
+	.campus {
+		width: 60%;
 	}
 
 	.filter {
 		flex: 1;
 	}
 
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		margin-top: 1rem;
-		cursor: pointer;
-	}
-
-	th,
-	td {
-		border: 1px solid #ddd;
-		padding: 8px;
-	}
-
-	th {
-		background-color: #f2f2f2;
-	}
-
-	th {
-		text-align: left;
+	.campus-filters {
+		display: grid;
+		grid-template-columns: repeat(2, 0.2fr);
+		grid-template-rows: repeat(2, auto);
+		gap: 0rem;
 	}
 </style>

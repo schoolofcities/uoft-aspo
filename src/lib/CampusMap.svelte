@@ -3,7 +3,8 @@
     import maplibregl from "maplibre-gl";
     import "maplibre-gl/dist/maplibre-gl.css";
     import * as pmtiles from "pmtiles";
-    import BaseLayer from "/src/data/toronto.json";
+    import BaseLayer from "../data/toronto.json";
+    import CampusLocations from "../data/campus_locations.geo.json";
     import { CampusStore, TriCampusStore } from "$lib/stores";
     import { get } from "svelte/store";
     import "../assets/global.css";
@@ -13,11 +14,12 @@
         maxWidth: 100,
         unit: "metric",
     });
-    let PMTILES_URL = "/src/data/toronto.pmtiles";
+    
+    let PMTILES_URL = "/toronto.pmtiles";
 
     const maxBounds = [
-        [-79.7712, 43.44], // SW coords
-        [-78.914763, 43.93074], // NE coords
+        [-79.7952, 43.3915], // SW coords
+        [-79.0361, 43.8934], // NE coords
     ];
 
     let defaultColor;
@@ -28,8 +30,8 @@
         maplibregl.addProtocol("pmtiles", protocol.tile);
 
         const rootStyles = getComputedStyle(document.documentElement);
-        defaultColor = rootStyles.getPropertyValue('--brandGray').trim();
-        highlightColor = rootStyles.getPropertyValue('--brandMedBlue').trim();
+        defaultColor = rootStyles.getPropertyValue("--brandGray").trim();
+        highlightColor = rootStyles.getPropertyValue("--brandMedBlue").trim();
 
         map = new maplibregl.Map({
             container: "map",
@@ -48,8 +50,8 @@
                     },
                 ],
             },
-            center: [-79.405, 43.647],
-            zoom: 9.4,
+            center: [-79.4156, 43.643],
+            zoom: 9.9349,
             maxZoom: 16.5,
             minZoom: 9,
             maxPitch: 0,
@@ -73,10 +75,8 @@
         map.dragRotate.disable();
         map.doubleClickZoom.disable();
 
-        const response = await fetch("/src/data/campus_locations.geojson");
-        const geojson = await response.json();
-
         map.on("load", function () {
+
             map.addSource("protomaps", {
                 type: "vector",
                 url: "pmtiles://" + PMTILES_URL,
@@ -90,7 +90,7 @@
 
             map.addSource("campus-locations", {
                 type: "geojson",
-                data: geojson,
+                data: CampusLocations,
             });
 
             map.addLayer({
@@ -108,8 +108,6 @@
                     acc[campus] = highlightColor;
                     return acc;
                 }, {});
-
-                // const defaultColor = 'grey';
 
                 if (campusList.length === 0) {
                     map.setPaintProperty(
@@ -190,6 +188,7 @@
         map.on("moveend", () => {
             console.log("Map center:", map.getCenter());
             console.log("Map zoom level:", map.getZoom());
+            console.log("Map Bounds:", map.getBounds());
         });
     });
 </script>
@@ -198,7 +197,9 @@
 
 <style>
     #map {
-        width: 720px;
-        height: 50vh;
+        width: 60%;
+        height: 80vh;
+        margin-right: 1em;
+        border: 1px solid var(--brandGray);
     }
 </style>
