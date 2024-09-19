@@ -184,17 +184,23 @@
 
 <div class="container">
 
-	{#if filteredPrograms.length > 0}
-		<ul class="program-list">
-			{#each filteredPrograms as program}
-				<li>
-					<strong>{program["Program Name"]}</strong><br />
-					{program["Division"]}<br />
-					{program["Campus"]}
-				</li>
-			{/each}
-		</ul>
-	{/if}
+{#if filteredPrograms.length > 0}
+    <ul class="program-list">
+        {#each filteredPrograms as program}
+            <li>
+                <strong>{program["Program Name"]}</strong><br />
+                {program["Division"]}<br />
+                {program["Campus"]}
+            </li>
+        {/each}
+    </ul>
+{:else}
+	<ul class="program-list">
+		<li>
+			<strong>No programs found</strong><br />
+	</li>
+	</ul>
+{/if}
 
 	<CampusMap />
 </div>
@@ -256,5 +262,9 @@
 		grid-template-columns: repeat(2, 0.2fr);
 		grid-template-rows: repeat(2, auto);
 		gap: 0rem;
+	}
+
+	p {
+		color: black;
 	}
 </style>
