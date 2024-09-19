@@ -129,7 +129,7 @@
                 if (get(TriCampusStore)) {
                     // TriCampusStore is true, highlight all points
                     updateCampusPoints(
-                        geojson.features.map((f) => f.properties.Campus),
+                        CampusLocations.features.map((f) => f.properties.Campus),
                     );
                 } else {
                     // TriCampusStore is false, use CampusStore for highlighting
@@ -141,7 +141,7 @@
                 CampusStore.subscribe((campuses) => {
                     if (get(TriCampusStore)) {
                         updateCampusPoints(
-                            geojson.features.map((f) => f.properties.Campus),
+                            CampusLocations.features.map((f) => f.properties.Campus),
                         );
                     } else {
                         updateCampusPoints(campuses);
