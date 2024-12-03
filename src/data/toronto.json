@@ -238,7 +238,7 @@
             ]
         ],
         "paint": {
-            "line-color": "#d0d1c9",
+            "line-color": "#eaeae5",
             "line-width": [
                 "interpolate",
                 [
@@ -976,7 +976,7 @@
         "source-layer": "buildings",
         "paint": {
             "fill-color": "#d0d1c9",
-            "fill-opacity": 0.5
+            "fill-opacity": 0
         }
     },
     {
@@ -1562,7 +1562,7 @@
         "type": "line",
         "source": "protomaps",
         "source-layer": "roads",
-        "maxzoom": 10,
+        "maxzoom": 6,
         "filter": [
             "all",
             [
@@ -1655,7 +1655,7 @@
         "type": "line",
         "source": "protomaps",
         "source-layer": "roads",
-        "maxzoom": 10,
+        "maxzoom": 6,
         "filter": [
             "all",
             [
@@ -2782,6 +2782,7 @@
         "type": "symbol",
         "source": "protomaps",
         "source-layer": "places",
+        "minzoom": 9,
         "filter": [
             "==",
             "pmap:kind",
@@ -2862,7 +2863,7 @@
             "text-color": "#1E3765",
             "text-halo-color": "#ffffff",
             "text-halo-width": 0,
-            "text-opacity": 0.3
+            "text-opacity": 0.25
         }
 
     },

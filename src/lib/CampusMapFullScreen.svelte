@@ -16,15 +16,15 @@
 	let PMTILES_URL = "/toronto.pmtiles";
 
 	const campusBounds = [
-		[-79.66261111, 43.54825], // SW corner
-		[-79.18733333, 43.78311111], // NE corner
+		[-79.70, 43.60], // SW corner
+		[-79.15, 43.74], // NE corner
 	];
 
 	const padding = 50;
 	const bearing = -17.1;
 
 	let defaultColor = "#1E3765";
-	let highlightColor = "#F1C500";
+	let highlightColor = "#AB1368";
 
 	onMount(async () => {
 		let protocol = new pmtiles.Protocol();
@@ -57,6 +57,7 @@
 				bearing: bearing,
 			},
 			maxPitch: 0,
+			maxZoom: 11,
 			projection: "globe",
 			scrollZoom: false,
 			dragPan: false,
@@ -112,6 +113,27 @@
 				},
 			});
 
+			map.addLayer({
+				id: "campus-points-label",
+				type: "symbol",
+				source: "campus-locations",
+				minzoom: 8,
+				layout: {
+					'text-field': ['get', 'Campus'], 
+					'text-size': 18,
+					'text-anchor': 'top', 
+					'text-offset': [0, -1.7],
+					"text-font": [
+						"TradeGothic LT Bold"
+					],
+				},
+				paint: {
+					'text-color': '#1E3765', 
+					'text-halo-color': '#FFFFFF', 
+					'text-halo-width': 2, 
+				},
+			});
+
 			const popup = new maplibregl.Popup({
 				closeButton: false,
 				closeOnClick: false,
@@ -121,13 +143,14 @@
 				map.getCanvas().style.cursor = "pointer";
 				const coordinates = e.features[0].geometry.coordinates.slice();
 				const { Campus, Address } = e.features[0].properties;
-
-				popup
-					.setLngLat(coordinates)
-					.setHTML(`<strong>${Campus}</strong><br>${Address}`)
-					.addTo(map);
-					
 				map.setPaintProperty("campus-points", "circle-color", [
+					"match",
+					["get", "Campus"],
+					Campus,
+					highlightColor,
+					defaultColor,
+				]);
+				map.setPaintProperty("campus-points-label", "text-color", [
 					"match",
 					["get", "Campus"],
 					Campus,
@@ -142,6 +165,11 @@
 				map.setPaintProperty(
 					"campus-points",
 					"circle-color",
+					defaultColor,
+				);
+				map.setPaintProperty(
+					"campus-points-label",
+					"text-color",
 					defaultColor,
 				);
 			});
