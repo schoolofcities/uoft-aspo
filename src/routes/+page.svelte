@@ -21,7 +21,7 @@
 		updateFilteredPrograms();
 	}
 
-	onMount( async() => {
+	onMount(async () => {
 		const csvFilePath = "/src/data/access_programs_inventory.csv";
 		fetch(csvFilePath)
 			.then((response) => response.text())
@@ -140,67 +140,64 @@
 				}
 			});
 	}
-
 </script>
 
 <div class="filters-container">
-	
 	<div class="program">
-	<div class="filter">
-		<label>Type of Program</label>
-		{#each uniqueProgramTypes as programType}
-			<div>
-				<input
-					type="checkbox"
-					value={programType}
-					on:change={handleProgramTypeChange}
-					checked={selectedProgramTypes.has(programType)}
-				/>
-				{programType.replace(/_/g, " ")}
-			</div>
-		{/each}
-	</div>
-</div>
-
-<div class="campus">
-	<div class="filter">
-		<label>Campus</label>
-		<div class="campus-filters">
-			{#each uniqueCampuses as campus}
+		<div class="filter">
+			<label>Type of Program</label>
+			{#each uniqueProgramTypes as programType}
 				<div>
 					<input
 						type="checkbox"
-						value={campus}
-						on:change={handleCampusChange}
-						checked={currentCampusStore.includes(campus)}
+						value={programType}
+						on:change={handleProgramTypeChange}
+						checked={selectedProgramTypes.has(programType)}
 					/>
-					{campus}
+					{programType.replace(/_/g, " ")}
 				</div>
 			{/each}
 		</div>
 	</div>
-</div>
+
+	<div class="campus">
+		<div class="filter">
+			<label>Campus</label>
+			<div class="campus-filters">
+				{#each uniqueCampuses as campus}
+					<div>
+						<input
+							type="checkbox"
+							value={campus}
+							on:change={handleCampusChange}
+							checked={currentCampusStore.includes(campus)}
+						/>
+						{campus}
+					</div>
+				{/each}
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="container">
-
-{#if filteredPrograms.length > 0}
-    <ul class="program-list">
-        {#each filteredPrograms as program}
-            <li>
-                <strong>{program["Program Name"]}</strong><br />
-                {program["Division"]}<br />
-                {program["Campus"]}
-            </li>
-        {/each}
-    </ul>
-{:else}
-	<ul class="program-list">
-		<li>
-			<strong>No programs found</strong><br />
-	</li>
-	</ul>
-{/if}
+	{#if filteredPrograms.length > 0}
+		<ul class="program-list">
+			{#each filteredPrograms as program}
+				<li>
+					<strong>{program["Program Name"]}</strong><br />
+					{program["Division"]}<br />
+					{program["Campus"]}
+				</li>
+			{/each}
+		</ul>
+	{:else}
+		<ul class="program-list">
+			<li>
+				<strong>No programs found</strong><br />
+			</li>
+		</ul>
+	{/if}
 
 	<CampusMap />
 </div>
@@ -235,7 +232,7 @@
 	label {
 		font-weight: bold;
 		font-size: 1em;
-		margin-bottom: .5em;
+		margin-bottom: 0.5em;
 		display: block;
 	}
 
@@ -262,9 +259,5 @@
 		grid-template-columns: repeat(2, 0.2fr);
 		grid-template-rows: repeat(2, auto);
 		gap: 0rem;
-	}
-
-	p {
-		color: black;
 	}
 </style>
