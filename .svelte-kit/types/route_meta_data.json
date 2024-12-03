@@ -1,8 +1,0 @@
-{
-	"/": [],
-	"/big-map": [
-		"src/routes/big-map/+page.js",
-		"src/routes/big-map/+layout.js",
-		"src/routes/big-map/+layout.js"
-	]
-}
