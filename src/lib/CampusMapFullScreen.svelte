@@ -180,6 +180,50 @@
 					window.open(URL, "_blank");
 				}
 			});
+
+			// essentially duplicated this code, but for the label, maybe there is a more efficient way?
+
+			map.on("mouseenter", "campus-points-label", (e) => {
+				map.getCanvas().style.cursor = "pointer";
+				const coordinates = e.features[0].geometry.coordinates.slice();
+				const { Campus, Address } = e.features[0].properties;
+				map.setPaintProperty("campus-points", "circle-color", [
+					"match",
+					["get", "Campus"],
+					Campus,
+					highlightColor,
+					defaultColor,
+				]);
+				map.setPaintProperty("campus-points-label", "text-color", [
+					"match",
+					["get", "Campus"],
+					Campus,
+					highlightColor,
+					defaultColor,
+				]);
+			});
+
+			map.on("mouseleave", "campus-points-label", () => {
+				map.getCanvas().style.cursor = "";
+				popup.remove();
+				map.setPaintProperty(
+					"campus-points",
+					"circle-color",
+					defaultColor,
+				);
+				map.setPaintProperty(
+					"campus-points-label",
+					"text-color",
+					defaultColor,
+				);
+			});
+
+			map.on("click", "campus-points-label", (e) => {
+				const { URL } = e.features[0].properties;
+				if (URL) {
+					window.open(URL, "_blank");
+				}
+			});
 		});
 
 		window.addEventListener("resize", () => {
