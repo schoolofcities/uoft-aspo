@@ -15,7 +15,7 @@
                 "Address": "3359 Mississauga Road<br>Mississauga, ON L5L 1C6",
                 "Latitude": 43.54825,
                 "Longitude": -79.66261111,
-                "URL": "https://www.utm.utoronto.ca/"
+                "URL": "https://plugintest-ut-aspo.pantheonsite.io/access-programs/#Mississauga"
             },
             "geometry": {
                 "type": "Point",
@@ -32,7 +32,7 @@
                 "Address": "1265 Military Trail<br>Scarborough, ON M1C 1A4",
                 "Latitude": 43.78311111,
                 "Longitude": -79.18733333,
-                "URL": "https://www.utsc.utoronto.ca/"
+                "URL": "https://plugintest-ut-aspo.pantheonsite.io/access-programs/#Scarborough"
             },
             "geometry": {
                 "type": "Point",
@@ -49,7 +49,7 @@
                 "Address": "27 King's College Circle<br>Toronto, ON M5S 1A1",
                 "Latitude": 43.66377778,
                 "Longitude": -79.39602778,
-                "URL": "https://www.utoronto.ca/"
+                "URL": "https://plugintest-ut-aspo.pantheonsite.io/access-programs/#St%20George"
             },
             "geometry": {
                 "type": "Point",
