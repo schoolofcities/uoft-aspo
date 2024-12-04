@@ -16,7 +16,7 @@
 	let PMTILES_URL = "/toronto.pmtiles";
 
 	const campusBounds = [
-		[-79.70, 43.60], // SW corner
+		[-79.7, 43.6], // SW corner
 		[-79.15, 43.74], // NE corner
 	];
 
@@ -29,10 +29,6 @@
 	onMount(async () => {
 		let protocol = new pmtiles.Protocol();
 		maplibregl.addProtocol("pmtiles", protocol.tile);
-
-		// const rootStyles = getComputedStyle(document.documentElement);
-		// defaultColor = rootStyles.getPropertyValue("--brandGray").trim();
-		// highlightColor = rootStyles.getPropertyValue("--brandMedBlue").trim();
 
 		map = new maplibregl.Map({
 			container: "map",
@@ -83,9 +79,13 @@
 		);
 
 		// Make the attribution control compact by default
-		document.querySelector(".maplibregl-ctrl-attrib").classList.add("maplibregl-compact");
+		document
+			.querySelector(".maplibregl-ctrl-attrib")
+			.classList.add("maplibregl-compact");
 
 		map.addControl(scale, "bottom-left");
+
+		// Load map and layers
 
 		map.on("load", () => {
 			map.addSource("protomaps", {
@@ -133,15 +133,11 @@
 				},
 			});
 
-			const popup = new maplibregl.Popup({
-				closeButton: false,
-				closeOnClick: false,
-			});
+			// Updates color on mouse enter
 
 			map.on("mouseenter", "campus-points", (e) => {
 				map.getCanvas().style.cursor = "pointer";
-				const coordinates = e.features[0].geometry.coordinates.slice();
-				const { Campus, Address } = e.features[0].properties;
+				const { Campus } = e.features[0].properties;
 				map.setPaintProperty("campus-points", "circle-color", [
 					"match",
 					["get", "Campus"],
@@ -158,9 +154,10 @@
 				]);
 			});
 
+			// Updates color on mouse leave
+
 			map.on("mouseleave", "campus-points", () => {
 				map.getCanvas().style.cursor = "";
-				popup.remove();
 				map.setPaintProperty(
 					"campus-points",
 					"circle-color",
@@ -172,6 +169,8 @@
 					defaultColor,
 				);
 			});
+
+			// Open the URL when a campus point is clicked
 
 			map.on("click", "campus-points", (e) => {
 				const { URL } = e.features[0].properties;
@@ -179,51 +178,9 @@
 					window.open(URL, "_blank");
 				}
 			});
-
-			// essentially duplicated this code, but for the label, maybe there is a more efficient way?
-
-			map.on("mouseenter", "campus-points-label", (e) => {
-				map.getCanvas().style.cursor = "pointer";
-				const coordinates = e.features[0].geometry.coordinates.slice();
-				const { Campus, Address } = e.features[0].properties;
-				map.setPaintProperty("campus-points", "circle-color", [
-					"match",
-					["get", "Campus"],
-					Campus,
-					highlightColor,
-					defaultColor,
-				]);
-				map.setPaintProperty("campus-points-label", "text-color", [
-					"match",
-					["get", "Campus"],
-					Campus,
-					highlightColor,
-					defaultColor,
-				]);
-			});
-
-			map.on("mouseleave", "campus-points-label", () => {
-				map.getCanvas().style.cursor = "";
-				popup.remove();
-				map.setPaintProperty(
-					"campus-points",
-					"circle-color",
-					defaultColor,
-				);
-				map.setPaintProperty(
-					"campus-points-label",
-					"text-color",
-					defaultColor,
-				);
-			});
-
-			map.on("click", "campus-points-label", (e) => {
-				const { URL } = e.features[0].properties;
-				if (URL) {
-					window.open(URL, "_blank");
-				}
-			});
 		});
+
+		// Resize the map when the window is resized
 
 		window.addEventListener("resize", () => {
 			map.resize();
