@@ -69,8 +69,6 @@
 			attributionControl: false,
 		});
 
-		
-
 		const attributions = [
 			'<a href="https://openstreetmap.org">OpenStreetMap</a>',
 			'<a href="https://open.toronto.ca/">City of Toronto</a>',
@@ -78,11 +76,14 @@
 		const attributionString = attributions.join(", ");
 
 		map.addControl(
-		new maplibregl.AttributionControl({
-			compact: true, // Ensures the attribution is in compact mode
-		}),
-			'bottom-right'     
+			new maplibregl.AttributionControl({
+				compact: true,
+			}),
+			"bottom-right",
 		);
+
+		// Make the attribution control compact by default
+		document.querySelector(".maplibregl-ctrl-attrib").classList.add("maplibregl-compact");
 
 		map.addControl(scale, "bottom-left");
 
@@ -119,18 +120,16 @@
 				source: "campus-locations",
 				minzoom: 8,
 				layout: {
-					'text-field': ['get', 'Campus'], 
-					'text-size': 18,
-					'text-anchor': 'top', 
-					'text-offset': [0, -1.7],
-					"text-font": [
-						"TradeGothic LT Bold"
-					],
+					"text-field": ["get", "Campus"],
+					"text-size": 18,
+					"text-anchor": "top",
+					"text-offset": [0, -1.7],
+					"text-font": ["TradeGothic LT Bold"],
 				},
 				paint: {
-					'text-color': '#1E3765', 
-					'text-halo-color': '#FFFFFF', 
-					'text-halo-width': 2, 
+					"text-color": "#1E3765",
+					"text-halo-color": "#FFFFFF",
+					"text-halo-width": 2,
 				},
 			});
 
