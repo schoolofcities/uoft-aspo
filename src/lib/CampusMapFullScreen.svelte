@@ -13,7 +13,7 @@
 		unit: "metric",
 	});
 
-	let PMTILES_URL = "/toronto.pmtiles";
+	let PMTILES_URL = "/uoft-aspo/toronto.pmtiles";
 	// let PMTILES_URL = 'https://api.protomaps.com/tiles/v4.json?key=7f48bb9c6a1f1e3b'
 
 	const campusBounds = [
