@@ -73,7 +73,7 @@
 		
 
 		const attributions = [
-			'<a href="https://openstreetmap.org">Map data: OpenStreetMap</a>'
+			'<a href="https://openstreetmap.org" target= "_blank">Map data: OpenStreetMap</a>'
 		];
 		const attributionString = attributions.join(", ");
 
