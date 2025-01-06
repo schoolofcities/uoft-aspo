@@ -4,8 +4,18 @@
 	import "maplibre-gl/dist/maplibre-gl.css";
 	import * as pmtiles from "pmtiles";
 	import BaseLayer from "../data/toronto.json";
+	import BaseLayerBold from "../data/toronto-bold.json";
 	import CampusLocations from "../data/campus_locations.geo.json";
 	import "../assets/global.css";
+
+	export let mapStyle;
+
+	let base = [];
+	if (mapStyle === "bold") {
+		base = BaseLayerBold;
+	} else {
+		base = BaseLayer;
+	}
 
 	let map;
 	let scale = new maplibregl.ScaleControl({
@@ -94,7 +104,7 @@
 				attributionControl: false,
 			});
 
-			BaseLayer.forEach((layer) => {
+			base.forEach((layer) => {
 				map.addLayer(layer);
 			});
 

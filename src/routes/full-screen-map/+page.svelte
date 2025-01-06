@@ -3,4 +3,4 @@
 
 </script>
 
-<CampusMapFullScreen />
+<CampusMapFullScreen mapStyle="bold"/>
