@@ -5,6 +5,7 @@
 	import * as pmtiles from "pmtiles";
 	import BaseLayer from "../data/toronto.json";
 	import BaseLayerBold from "../data/toronto-bold.json";
+	import BaseLayerDark from "../data/toronto-dark.json";
 	import CampusLocations from "../data/campus_locations.geo.json";
 	import "../assets/global.css";
 
@@ -12,7 +13,7 @@
 
 	let base = [];
 	if (mapStyle === "bold") {
-		base = BaseLayerBold;
+		base = BaseLayerDark;
 	} else {
 		base = BaseLayer;
 	}
@@ -34,8 +35,9 @@
 	const padding = 50;
 	const bearing = -17.1;
 
-	let defaultColor = "#1E3765";
+	let defaultColor = "#F1C500"; // "#1E3765";
 	let highlightColor = "#AB1368";
+	let haloColor = "#1E3765"; //"#fff";
 
 	onMount(async () => {
 		let protocol = new pmtiles.Protocol();
@@ -138,8 +140,8 @@
 					],
 				},
 				paint: {
-					'text-color': '#1E3765', 
-					'text-halo-color': '#FFFFFF', 
+					'text-color': defaultColor, 
+					'text-halo-color': haloColor, 
 					'text-halo-width': 2, 
 				},
 			});
