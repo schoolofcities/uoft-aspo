@@ -4,16 +4,27 @@
 	import "maplibre-gl/dist/maplibre-gl.css";
 	import * as pmtiles from "pmtiles";
 	import BaseLayer from "../data/toronto.json";
-	import BaseLayerBold from "../data/toronto-bold.json";
+	import BaseLayerYellow from "../data/toronto-yellow.json";
 	import BaseLayerDark from "../data/toronto-dark.json";
+	import BaseLayerNavy from "../data/toronto-navy.json";
+	import BaseLayerGreen from "../data/toronto-green.json";
+	import BaseLayerWhiteBlue from "../data/toronto-whiteblue.json";
 	import CampusLocations from "../data/campus_locations.geo.json";
 	import "../assets/global.css";
 
 	export let mapStyle;
 
 	let base = [];
-	if (mapStyle === "bold") {
+	if (mapStyle === "dark") {
 		base = BaseLayerDark;
+	} else if (mapStyle === "yellow") {
+		base = BaseLayerYellow;
+	} else if (mapStyle === "navy") {
+		base = BaseLayerNavy;
+	} else if (mapStyle === "green") {
+		base = BaseLayerGreen;
+	} else if (mapStyle === "whiteblue") {
+		base = BaseLayerWhiteBlue;
 	} else {
 		base = BaseLayer;
 	}
@@ -35,9 +46,9 @@
 	const padding = 50;
 	const bearing = -17.1;
 
-	let defaultColor = "#F1C500"; // "#1E3765";
-	let highlightColor = "#AB1368";
-	let haloColor = "#1E3765"; //"#fff";
+	let defaultColor = "#1E3765"; // "#1E3765";
+	let highlightColor = "#ffffff";
+	let haloColor = "#ffffff"; //"#fff";
 
 	onMount(async () => {
 		let protocol = new pmtiles.Protocol();
