@@ -4,30 +4,32 @@
 	import "maplibre-gl/dist/maplibre-gl.css";
 	import * as pmtiles from "pmtiles";
 	import BaseLayer from "../data/toronto.json";
-	import BaseLayerYellow from "../data/toronto-yellow.json";
-	import BaseLayerDark from "../data/toronto-dark.json";
-	import BaseLayerNavy from "../data/toronto-navy.json";
+	// import BaseLayerYellow from "../data/toronto-yellow.json";
+	// import BaseLayerDark from "../data/toronto-dark.json";
+	// import BaseLayerNavy from "../data/toronto-navy.json";
 	import BaseLayerGreen from "../data/toronto-green.json";
-	import BaseLayerWhiteBlue from "../data/toronto-whiteblue.json";
+	// import BaseLayerWhiteBlue from "../data/toronto-whiteblue.json";
 	import CampusLocations from "../data/campus_locations.geo.json";
 	import "../assets/global.css";
 
-	export let mapStyle;
+	// export let mapStyle;
 
-	let base = [];
-	if (mapStyle === "dark") {
-		base = BaseLayerDark;
-	} else if (mapStyle === "yellow") {
-		base = BaseLayerYellow;
-	} else if (mapStyle === "navy") {
-		base = BaseLayerNavy;
-	} else if (mapStyle === "green") {
-		base = BaseLayerGreen;
-	} else if (mapStyle === "whiteblue") {
-		base = BaseLayerWhiteBlue;
-	} else {
-		base = BaseLayer;
-	}
+	// let base = [];
+	// if (mapStyle === "dark") {
+	// 	base = BaseLayerDark;
+	// } else if (mapStyle === "yellow") {
+	// 	base = BaseLayerYellow;
+	// } else if (mapStyle === "navy") {
+	// 	base = BaseLayerNavy;
+	// } else if (mapStyle === "green") {
+	// 	base = BaseLayerGreen;
+	// } else if (mapStyle === "whiteblue") {
+	// 	base = BaseLayerWhiteBlue;
+	// } else {
+	// 	base = BaseLayer;
+	// }
+
+	let base = BaseLayerGreen;
 
 	let map;
 	let scale = new maplibregl.ScaleControl({
@@ -47,7 +49,7 @@
 	const bearing = -17.1;
 
 	let defaultColor = "#1E3765"; // "#1E3765";
-	let highlightColor = "#ffffff";
+	let highlightColor = "#AB1368";
 	let haloColor = "#ffffff"; //"#fff";
 
 	onMount(async () => {
@@ -96,7 +98,7 @@
 		
 
 		const attributions = [
-			'<a href="https://openstreetmap.org" target= "_blank">Map data: OpenStreetMap</a>'
+			'ASPO gratefully acknowledges Jeff Allen and Scott McCallum at the <a href="https://schoolofcities.utoronto.ca/" target= "_blank" style="color: black; text-decoration: underline;">School of Cities</a> for designing this map. Data for the map are from <a href="https://openstreetmap.org" target= "_blank" style="color: black; text-decoration: underline;"> OpenStreetMap</a>'
 		];
 		const attributionString = attributions.join(", ");
 
@@ -107,7 +109,7 @@
 			'bottom-right'
 		);
 
-		map.addControl(scale, "bottom-left");
+		map.addControl(scale, "bottom-right");
 
 		map.on("load", () => {
 			map.addSource("protomaps", {
@@ -133,6 +135,9 @@
 				paint: {
 					"circle-radius": 8,
 					"circle-color": defaultColor,
+					"circle-stroke-color": haloColor,
+           			"circle-stroke-width": 2,
+					'circle-stroke-opacity': 0.7
 				},
 			});
 
@@ -143,7 +148,7 @@
 				minzoom: 8,
 				layout: {
 					'text-field': ['get', 'Campus'], 
-					'text-size': 18,
+					'text-size': 19,
 					'text-anchor': 'top', 
 					'text-offset': [0, -1.7],
 					"text-font": [
@@ -154,6 +159,7 @@
 					'text-color': defaultColor, 
 					'text-halo-color': haloColor, 
 					'text-halo-width': 2, 
+					'text-halo-blur': 1
 				},
 			});
 

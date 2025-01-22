@@ -4,4 +4,4 @@
 
 </script>
 
-<CampusMapFullScreen mapStyle="navy"/>
+<CampusMapFullScreen/>
