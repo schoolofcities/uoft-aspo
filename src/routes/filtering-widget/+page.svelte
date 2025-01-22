@@ -3,7 +3,7 @@
 	import Papa from "papaparse";
 	import CampusMap from "$lib/CampusMap.svelte";
 	import { CampusStore, TriCampusStore } from "$lib/stores";
-	import "../assets/global.css";
+	import "../../assets/global.css";
 
 	let campusData = [];
 	let uniqueCampusData = [];
