@@ -12,6 +12,8 @@
 	import CampusLocations from "../data/campus_locations.geo.json";
 	import "../assets/global.css";
 
+	import logo from "../assets/aspo-logo-blue.png";
+
 	// export let mapStyle;
 
 	// let base = [];
@@ -268,11 +270,50 @@
 
 <div id="map"></div>
 
+<div class="overlay">
+	<a href="https://www.aspo.utoronto.ca" target="_blank" rel="noopener noreferrer">
+		<img src={logo} alt="Overlay Image">
+	</a>
+</div>
+
 <style>
 
 	#map {
 		width: 100vw;
 		height: 100vh;
+		position: relative;
+	}
+
+	.overlay {
+		position: absolute; 
+		top: 0; 
+		left: 0; 
+		width: 275px; 
+		height: 37px; 
+		background-color: rgba(255, 255, 255, 0.9);
+		z-index: 10; 
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 10px;
+	}
+
+	.overlay a {
+		display: block;
+		width: 100%;
+		height: 100%;
+		text-align: center;
+	}
+
+	.overlay img {
+		margin-left: 10px;
+		margin-right: 10px;
+		max-width: 100%;
+		max-height: 100%;
+	}
+
+	.overlay img:hover {
+		opacity: 0.8;
 	}
 
 </style>
