@@ -323,6 +323,13 @@
 		font-size: 11px;
 		line-height: 1.3;
 		color: var(--brandDarkBlue);
+		text-align: right;
+	}
+	
+	@media (max-width: 760px) {
+		#att p {
+			text-align: left; 
+		}
 	}
 
 	a {
