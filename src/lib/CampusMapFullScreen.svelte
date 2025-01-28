@@ -342,7 +342,7 @@
 		right: 0; 
 		width: 210px; 
 		height: 30px; 
-		background-color: rgba(255, 255, 255, 0);
+		background-color: #6fc7eab2;
 		z-index: 10; 
 		display: flex;
 		align-items: center;
