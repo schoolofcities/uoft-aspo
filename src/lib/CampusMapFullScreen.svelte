@@ -100,18 +100,18 @@
 		
 
 		const attributions = [
-			'ASPO gratefully acknowledges Jeff Allen and Scott McCallum at the <a href="https://schoolofcities.utoronto.ca/" target= "_blank" style="color: black; text-decoration: underline;">School of Cities</a> for designing this map. Data for the map are from <a href="https://openstreetmap.org" target= "_blank" style="color: black; text-decoration: underline;"> OpenStreetMap</a>'
+			''
 		];
 		const attributionString = attributions.join(", ");
 
 		map.addControl(
-		new maplibregl.AttributionControl({
-			compact: false, // Ensures the attribution is in compact mode
-		}),
+			new maplibregl.AttributionControl({
+				compact: false, // Ensures the attribution is in compact mode
+			}),
 			'bottom-right'
 		);
 
-		map.addControl(scale, "bottom-right");
+		// map.addControl(scale, "bottom-left");
 
 		map.on("load", () => {
 			map.addSource("protomaps", {
@@ -268,15 +268,41 @@
 	});
 </script>
 
-<div id="map"></div>
 
-<div class="overlay">
-	<a href="https://www.aspo.utoronto.ca" target="_blank" rel="noopener noreferrer">
-		<img src={logo} alt="Overlay Image">
-	</a>
+<div id="container">
+
+	<div id="map">
+
+		<div class="overlay">
+			<a href="https://www.aspo.utoronto.ca" target="_blank" rel="noopener noreferrer">
+				<img src={logo} alt="Overlay Image">
+			</a>
+		</div>
+
+	</div>
+
+	<div id="att">
+		<p>ASPO gratefully acknowledges Jeff Allen and Scott McCallum at the <a href="https://schoolofcities.utoronto.ca/" target= "_blank" style="text-decoration: underline;">School of Cities</a> for designing this map. Data for the map are from <a href="https://openstreetmap.org" target= "_blank" style="text-decoration: underline;"> OpenStreetMap</a></p>
+	</div>
+
 </div>
 
+
+
+
 <style>
+
+	/* html, body {
+		margin: 0;
+		padding: 0;
+		height: 100%;
+	} */
+
+	#container {
+		display: flex;
+		flex-direction: column;
+		height: 100vh; 
+	}
 
 	#map {
 		width: 100vw;
@@ -284,13 +310,32 @@
 		position: relative;
 	}
 
+	#att {
+		flex-shrink: 0; 
+		background-color: #6FC7EA; 
+		padding: 4px;
+		border-top: solid 1px var(--brandMedBlue);
+		box-sizing: border-box; 
+	}
+
+	#att p {
+		margin: 0;
+		font-size: 11px;
+		line-height: 1.3;
+		color: var(--brandDarkBlue);
+	}
+
+	a {
+		color: var(--brandDarkBlue);
+	}
+
 	.overlay {
 		position: absolute; 
-		top: 0; 
-		left: 0; 
-		width: 275px; 
-		height: 37px; 
-		background-color: rgba(255, 255, 255, 0.9);
+		bottom: 0px; 
+		right: 0; 
+		width: 210px; 
+		height: 30px; 
+		background-color: rgba(255, 255, 255, 0);
 		z-index: 10; 
 		display: flex;
 		align-items: center;
@@ -303,6 +348,7 @@
 		width: 100%;
 		height: 100%;
 		text-align: center;
+		color: var(--brandDarkBlue);
 	}
 
 	.overlay img {
