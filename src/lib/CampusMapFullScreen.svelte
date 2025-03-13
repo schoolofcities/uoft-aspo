@@ -130,17 +130,66 @@
 				data: CampusLocations,
 			});
 
+			// SIMPLE POINTS WHAT WE HAD ORIGINALLY
+
+			// map.addLayer({
+			// 	id: "campus-points",
+			// 	type: "circle",
+			// 	source: "campus-locations",
+			// 	paint: {
+			// 		"circle-radius": 8,
+			// 		"circle-color": defaultColor,
+			// 		"circle-stroke-color": haloColor,
+           	// 		"circle-stroke-width": 2,
+			// 		'circle-stroke-opacity': 0.7
+			// 	},
+			// });
+
+			// map.addLayer({
+			// 	id: "campus-points-label",
+			// 	type: "symbol",
+			// 	source: "campus-locations",
+			// 	minzoom: 8,
+			// 	layout: {
+			// 		'text-field': ['get', 'Campus'], 
+			// 		'text-size': 19,
+			// 		'text-anchor': 'top', 
+			// 		'text-offset': [0, -1.7],
+			// 		"text-font": [
+			// 			"TradeGothic LT Bold"
+			// 		],
+			// 	},
+			// 	paint: {
+			// 		'text-color': defaultColor, 
+			// 		'text-halo-color': haloColor, 
+			// 		'text-halo-width': 2, 
+			// 		'text-halo-blur': 1
+			// 	},
+			// });
+
 			map.addLayer({
 				id: "campus-points",
 				type: "circle",
 				source: "campus-locations",
 				paint: {
-					"circle-radius": 8,
-					"circle-color": defaultColor,
+					'circle-radius': [
+						'sqrt', 
+						[
+							'/', 
+								[
+								'/', 
+								['get', 'Programs'], 
+								0.0015
+							], 
+							Math.PI 
+						]
+					],
+					'circle-color': defaultColor,
+					'circle-opacity': 0.5,
 					"circle-stroke-color": haloColor,
-           			"circle-stroke-width": 2,
-					'circle-stroke-opacity': 0.7
-				},
+					"circle-stroke-width": 2,
+					'circle-stroke-opacity': 1
+				}
 			});
 
 			map.addLayer({
@@ -151,8 +200,8 @@
 				layout: {
 					'text-field': ['get', 'Campus'], 
 					'text-size': 19,
-					'text-anchor': 'top', 
-					'text-offset': [0, -1.7],
+					'text-anchor': 'center', 
+					'text-offset': [0, 0],
 					"text-font": [
 						"TradeGothic LT Bold"
 					],
