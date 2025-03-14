@@ -3,7 +3,9 @@
 	import maplibregl from "maplibre-gl";
 	import "maplibre-gl/dist/maplibre-gl.css";
 	import * as pmtiles from "pmtiles";
-	import BaseLayer from "../data/toronto.json";
+	import { forceSimulation, forceX, forceY, forceCollide } from 'd3-force';
+
+	// import BaseLayer from "../data/toronto.json"; 
 	// import BaseLayerYellow from "../data/toronto-yellow.json";
 	// import BaseLayerDark from "../data/toronto-dark.json";
 	// import BaseLayerNavy from "../data/toronto-navy.json";
@@ -34,6 +36,88 @@
 	let base = BaseLayerGreen;
 
 	let map;
+
+
+
+	const swarmPoints = [];
+    CampusLocations.features.forEach(feature => {
+		const center = feature.geometry.coordinates;
+		const programs = feature.properties.Programs;
+
+		for (let i = 0; i < programs; i++) {
+			swarmPoints.push({
+				type: 'Feature',
+				properties: { ...feature.properties },
+				geometry: {
+					type: 'Point',
+					coordinates: [
+						center[0] + (Math.random() - 0.5) * 0.01, // Randomize longitude
+						center[1] + (Math.random() - 0.5) * 0.01 // Randomize latitude
+					]
+				},
+				originalCenter: center // Store the original center
+			});
+		}
+	});
+
+	// Function to update the beeswarm layout
+    function updateBeeswarm(map) {
+        const zoom = map.getZoom();
+        const collisionRadius = 0.0062 / Math.pow(2, zoom - 10); // Adjust collision radius based on zoom
+
+		swarmPoints.forEach(point => {
+			point.geometry.coordinates = [
+				point.originalCenter[0] + (Math.random() - 0.5) * 0.01, // Add slight randomness
+				point.originalCenter[1] + (Math.random() - 0.5) * 0.01
+			];
+		});
+
+        // Flatten the data for the simulation
+		const flattenedPoints = swarmPoints.map(point => ({
+			...point,
+			x: point.geometry.coordinates[0], // Extract longitude
+			y: point.geometry.coordinates[1] // Extract latitude
+		}));
+
+		// Run the force simulation on the flattened data
+		const simulation = forceSimulation(flattenedPoints)
+			.force('x', forceX(d => d.x).strength(0.1)) // Attract points to their center longitude
+			.force('y', forceY(d => d.y).strength(0.1)) // Attract points to their center latitude
+			.force('collide', forceCollide(collisionRadius)) // Prevent overlap (adjust radius based on zoom)
+			.stop();
+
+		simulation.tick(100);
+
+		// Map the updated x and y values back to the coordinates
+		swarmPoints.forEach((point, i) => {
+			point.geometry.coordinates[0] = flattenedPoints[i].x; // Update longitude
+			point.geometry.coordinates[1] = flattenedPoints[i].y; // Update latitude
+		});
+
+        // Update the GeoJSON with the new positions
+        const updatedFeatures = swarmPoints.map(point => ({
+            ...point,
+            geometry: {
+                type: 'Point',
+                coordinates: [point.geometry.coordinates[0], point.geometry.coordinates[1]]
+            }
+        }));
+
+        // Update the map source
+        map.getSource('beeswarm-source').setData({
+            type: 'FeatureCollection',
+            features: updatedFeatures
+        });
+    }
+
+
+
+
+
+
+
+
+
 	let scale = new maplibregl.ScaleControl({
 		maxWidth: 100,
 		unit: "metric",
@@ -130,6 +214,33 @@
 				data: CampusLocations,
 			});
 
+
+
+			map.addSource('beeswarm-source', {
+                type: 'geojson',
+                data: {
+                    type: 'FeatureCollection',
+                    features: swarmPoints
+                }
+            });
+
+            // Add the beeswarm layer
+            map.addLayer({
+                id: 'beeswarm',
+                type: 'circle',
+                source: 'beeswarm-source',
+                paint: {
+                    'circle-radius': 8, // Fixed radius for beeswarm points
+                    'circle-color': '#F1C500', // Fill color
+                    'circle-opacity': 0.1, // 50% fill opacity
+                    'circle-stroke-width': 1, // Stroke width
+                    'circle-stroke-color': '#ffffff', // Stroke color
+                    'circle-stroke-opacity': 0.1 // Fully opaque stroke
+                }
+            });
+
+            updateBeeswarm(map);
+
 			// SIMPLE POINTS WHAT WE HAD ORIGINALLY
 
 			// map.addLayer({
@@ -185,10 +296,10 @@
 						]
 					],
 					'circle-color': defaultColor,
-					'circle-opacity': 0.5,
+					'circle-opacity': 0.8,
 					"circle-stroke-color": haloColor,
 					"circle-stroke-width": 2,
-					'circle-stroke-opacity': 1
+					'circle-stroke-opacity': 0.99
 				}
 			});
 
@@ -209,10 +320,17 @@
 				paint: {
 					'text-color': defaultColor, 
 					'text-halo-color': haloColor, 
-					'text-halo-width': 2, 
-					'text-halo-blur': 1
+					'text-halo-width': 2.5, 
+					'text-halo-blur': 0.5,
+					'text-opacity': 1
 				},
 			});
+
+			
+            map.on('zoom', () => {
+                updateBeeswarm(map);
+            });
+
 
 			const popup = new maplibregl.Popup({
 				closeButton: false,
@@ -304,6 +422,8 @@
 					window.open(URL, "_blank");
 				}
 			});
+
+			
 		});
 
 		window.addEventListener("resize", () => {
@@ -314,7 +434,12 @@
 				bearing: bearing,
 			});
 		});
+
+		
 	});
+
+	
+
 </script>
 
 
