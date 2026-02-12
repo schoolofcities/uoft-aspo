@@ -216,30 +216,30 @@
 
 
 
-			map.addSource('beeswarm-source', {
-                type: 'geojson',
-                data: {
-                    type: 'FeatureCollection',
-                    features: swarmPoints
-                }
-            });
+			// map.addSource('beeswarm-source', {
+            //     type: 'geojson',
+            //     data: {
+            //         type: 'FeatureCollection',
+            //         features: swarmPoints
+            //     }
+            // });
 
-            // Add the beeswarm layer
-            map.addLayer({
-                id: 'beeswarm',
-                type: 'circle',
-                source: 'beeswarm-source',
-                paint: {
-                    'circle-radius': 8, // Fixed radius for beeswarm points
-                    'circle-color': '#F1C500', // Fill color
-                    'circle-opacity': 0.1, // 50% fill opacity
-                    'circle-stroke-width': 1, // Stroke width
-                    'circle-stroke-color': '#ffffff', // Stroke color
-                    'circle-stroke-opacity': 0.1 // Fully opaque stroke
-                }
-            });
+            // // Add the beeswarm layer
+            // map.addLayer({
+            //     id: 'beeswarm',
+            //     type: 'circle',
+            //     source: 'beeswarm-source',
+            //     paint: {
+            //         'circle-radius': 8, // Fixed radius for beeswarm points
+            //         'circle-color': '#F1C500', // Fill color
+            //         'circle-opacity': 0.1, // 50% fill opacity
+            //         'circle-stroke-width': 1, // Stroke width
+            //         'circle-stroke-color': '#ffffff', // Stroke color
+            //         'circle-stroke-opacity': 0.1 // Fully opaque stroke
+            //     }
+            // });
 
-            updateBeeswarm(map);
+            // updateBeeswarm(map);
 
 			// SIMPLE POINTS WHAT WE HAD ORIGINALLY
 
@@ -416,12 +416,12 @@
 				);
 			});
 
-			map.on("click", "campus-points-label", (e) => {
-				const { URL } = e.features[0].properties;
-				if (URL) {
-					window.open(URL, "_blank");
-				}
-			});
+			// map.on("click", "campus-points-label", (e) => {
+			// 	const { URL } = e.features[0].properties;
+			// 	if (URL) {
+			// 		window.open(URL, "_blank");
+			// 	}
+			// });
 
 			
 		});
