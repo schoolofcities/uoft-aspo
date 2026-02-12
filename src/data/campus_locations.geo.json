@@ -15,7 +15,7 @@
                 "Address": "3359 Mississauga Road<br>Mississauga, ON L5L 1C6",
                 "Latitude": 43.54825,
                 "Longitude": -79.66261111,
-                "URL": "https://www.aspo.utoronto.ca/access-programs/#Mississauga",
+                "URL": "https://www.aspo.utoronto.ca/access-programs-db/#Mississauga",
                 "Programs": 17
             },
             "geometry": {
@@ -33,7 +33,7 @@
                 "Address": "1265 Military Trail<br>Scarborough, ON M1C 1A4",
                 "Latitude": 43.78311111,
                 "Longitude": -79.18733333,
-                "URL": "https://www.aspo.utoronto.ca/access-programs/#Scarborough",
+                "URL": "https://www.aspo.utoronto.ca/access-programs-db/#Scarborough",
                 "Programs": 17
             },
             "geometry": {
@@ -51,7 +51,7 @@
                 "Address": "27 King's College Circle<br>Toronto, ON M5S 1A1",
                 "Latitude": 43.66377778,
                 "Longitude": -79.39602778,
-                "URL": "https://www.aspo.utoronto.ca/access-programs/#St%20George",
+                "URL": "https://www.aspo.utoronto.ca/access-programs-db/#St%20George",
                 "Programs": 50
             },
             "geometry": {
